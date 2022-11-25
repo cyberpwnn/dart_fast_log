@@ -1,10 +1,11 @@
 library fast_log;
 
 import 'package:colored_print/colored_print.dart';
-import 'package:flutter/foundation.dart';
+
+bool lDebugMode = true;
 
 void _log(dynamic f, {String category = 'Info', PrintColor? color}) =>
-    kDebugMode
+    lDebugMode
         ? color != null
             ? ColoredPrint.show("[$category]: ${f ?? 'null'}",
                 messageColor: color)
