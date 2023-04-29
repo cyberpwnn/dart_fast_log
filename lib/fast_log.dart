@@ -3,6 +3,7 @@ library fast_log;
 import 'package:colored_print/colored_print.dart';
 
 bool lDebugMode = true;
+bool truncate = true;
 LogHandler? lLogHandler;
 
 typedef LogHandler = void Function(LogCategory category, String log);
@@ -18,14 +19,35 @@ enum LogCategory {
   network
 }
 
-void _log(dynamic f, {String category = 'Info', PrintColor? color}) =>
-    lDebugMode
-        ? color != null
-            ? ColoredPrint.show("[$category]: ${f ?? 'null'}",
-                messageColor: color)
-            // ignore: avoid_print
-            : print("[$category]: ${f ?? 'null'}")
-        : {};
+List<String> _truncate(String longLog) {
+  if (!truncate) {
+    return [longLog];
+  }
+
+  List<String> s = longLog
+      .splitMapJoin(
+        RegExp('.{1,1024}'),
+        onMatch: (m) => '${m.group(0)}\n',
+        onNonMatch: (n) => n,
+      )
+      .split('\n');
+  s.removeWhere((element) => element.trim().isEmpty);
+  return s;
+}
+
+void _log(dynamic f, {String category = 'Info', PrintColor? color}) {
+  if (lDebugMode) {
+    if (color != null) {
+      for (String i in _truncate(f.toString())) {
+        ColoredPrint.show("[$category]: $i", messageColor: color);
+      }
+    } else {
+      for (String i in _truncate(f.toString())) {
+        print("[$category]: $i");
+      }
+    }
+  }
+}
 
 void info(dynamic f, {PrintColor? color}) {
   _log(f, category: 'Info', color: color ?? PrintColor.cyan);

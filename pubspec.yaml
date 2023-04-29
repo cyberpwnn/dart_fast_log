@@ -1,8 +1,8 @@
 name: fast_log
 description: Super simple colored logging for the impatient developer
-version: 1.0.2
+version: 1.0.5
 homepage: https://github.com/ArcaneArts/fast_log
 environment:
   sdk: '>=2.18.4 <3.0.0'
 dependencies:
-  colored_print: ^1.0.0
+  colored_print: any
